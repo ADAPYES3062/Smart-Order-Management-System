@@ -1,17 +1,9 @@
 package com.payment.paymentmanagement.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "payments")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Payment {
 
     @Id
@@ -19,10 +11,29 @@ public class Payment {
     private Long id;
 
     private Long orderId;
-
-    private String paymentMode;  // e.g., CARD, UPI, NETBANKING
-
+    private String paymentMode;
     private Double amount;
+    private String status;
 
-    private String status;       // e.g., SUCCESS or FAILED
+    public Payment(Long orderId, String paymentMode, Double amount, String status) {
+        this.orderId = orderId;
+        this.paymentMode = paymentMode;
+        this.amount = amount;
+        this.status = status;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Long getOrderId() { return orderId; }
+    public void setOrderId(Long orderId) { this.orderId = orderId; }
+
+    public String getPaymentMode() { return paymentMode; }
+    public void setPaymentMode(String paymentMode) { this.paymentMode = paymentMode; }
+
+    public Double getAmount() { return amount; }
+    public void setAmount(Double amount) { this.amount = amount; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }
