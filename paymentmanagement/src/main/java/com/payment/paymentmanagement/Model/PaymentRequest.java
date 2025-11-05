@@ -1,17 +1,26 @@
 package com.payment.paymentmanagement.Model;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class PaymentRequest {
 
-    private Long orderId;        // ID of the order being paid for
-    private String paymentMode;  // CARD / UPI / NETBANKING
-    private Double amount;       // Payment amount
+    @NotNull(message = "Order ID is required")
+    private Long orderId;
+
+    @NotBlank(message = "Payment mode cannot be blank")
+    private String paymentMode;
+
+    @NotNull(message = "Amount is required")
+    @Min(value = 1, message = "Amount must be greater than zero")
+    private Double amount;
+
+    public Long getOrderId() { return orderId; }
+    public void setOrderId(Long orderId) { this.orderId = orderId; }
+
+    public String getPaymentMode() { return paymentMode; }
+    public void setPaymentMode(String paymentMode) { this.paymentMode = paymentMode; }
+
+    public Double getAmount() { return amount; }
+    public void setAmount(Double amount) { this.amount = amount; }
 }

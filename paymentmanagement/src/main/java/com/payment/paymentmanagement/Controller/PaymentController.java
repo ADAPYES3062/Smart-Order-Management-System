@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/payments")
 public class PaymentController {
@@ -19,18 +21,35 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<String>> home() {
+    /**
+     * Root Endpoint - sanity check
+     */
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<PaymentResponse>>> getAllPayments() {
+        List<Payment> payments = paymentService.getAllPayments();
+
+        if (payments.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(new ApiResponse<>(HttpStatus.NO_CONTENT.value(),
+                            "No payments found", null));
+        }
+
+        List<PaymentResponse> responseList = payments.stream()
+                .map(payment -> new PaymentResponse(
+                        payment.getId(),
+                        payment.getOrderId(),
+                        payment.getPaymentMode(),
+                        payment.getAmount(),
+                        payment.getStatus()))
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(
                 new ApiResponse<>(HttpStatus.OK.value(),
-                        "Welcome to Payment Service API",
-                        "Use POST /payments to create a payment")
+                        "Payments retrieved successfully", responseList)
         );
-    }
-
+}
     /**
-     * POST /payments
-     * Processes a new payment request.
+     * POST /payments — process a payment
      */
     @PostMapping
     public ResponseEntity<ApiResponse<PaymentResponse>> processPayment(@RequestBody @Valid PaymentRequest request) {
@@ -50,12 +69,14 @@ public class PaymentController {
     }
 
     /**
-     * GET /payments/{id}
-     * Fetch payment details by payment ID.
+     * GET /payments/{id} — fetch payment details
      */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<PaymentResponse>> getPaymentById(@PathVariable Long id) {
         Payment payment = paymentService.getPaymentById(id);
+        if (payment == null) {
+            throw new PaymentNotFoundException("Payment not found with id: " + id);
+        }
 
         PaymentResponse response = new PaymentResponse(
                 payment.getId(),
