@@ -18,7 +18,7 @@ public interface PaymentClient {
     String getPaymentById(@PathVariable long id);
 
     @PostMapping(value = "/payments", consumes = "application/json", produces = "application/json")
-    ApiResponse<PaymentResponse> processPayment(@RequestBody ApiResponse<PaymentRequest> paymentRequest);
+    ApiResponse<PaymentResponse> processPayment(@RequestBody PaymentRequest paymentRequest);
 
     
 }

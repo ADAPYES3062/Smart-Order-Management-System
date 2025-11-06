@@ -23,7 +23,7 @@ public class PaymentService {
                 request.getOrderId(),
                 request.getPaymentMode(),
                 request.getAmount(),
-                (request.getAmount() > 0) ? "SUCCESS" : "FAILED"
+                (Math.random() > 0.8) ? "SUCCESS" : "FAILED"
         );
         return paymentRepository.save(payment);
     }

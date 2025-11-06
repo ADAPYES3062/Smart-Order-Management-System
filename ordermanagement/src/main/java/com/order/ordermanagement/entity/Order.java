@@ -6,7 +6,10 @@ import java.util.Objects;
 
 import com.order.ordermanagement.model.ProductEntry;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +27,16 @@ public class Order {
     private Long id;
 
     @ElementCollection
-    @CollectionTable(name = "order_products", joinColumns = @JoinColumn(name = "order_id"))
+    @CollectionTable(
+        name = "order_products",
+        joinColumns = @JoinColumn(name = "order_id")
+    )
+    @AttributeOverrides({
+        @AttributeOverride(name = "productId",
+                           column = @Column(name = "product_id")),
+        @AttributeOverride(name = "quantity",
+                           column = @Column(name = "quantity"))
+    })
     private List<ProductEntry> products = new ArrayList<>();
 
     private String status;

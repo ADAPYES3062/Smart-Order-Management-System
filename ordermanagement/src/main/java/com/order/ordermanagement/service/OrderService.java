@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.order.ordermanagement.client.PaymentClient;
 import com.order.ordermanagement.client.ProductClient;
 import com.order.ordermanagement.entity.Order;
+import com.order.ordermanagement.model.ApiResponse;
 import com.order.ordermanagement.model.OrderDto;
 import com.order.ordermanagement.model.PaymentRequest;
 import com.order.ordermanagement.model.PaymentResponse;
@@ -54,7 +55,6 @@ public class OrderService {
     public OrderDto createOrder(OrderDto orderDto) {
         Order order = convertDtoToEntity(orderDto);
         order.setStatus("WAITING FOR PAYMENT");
-        order.setProducts(orderDto.getProducts());
         Order savedOrder = orderRepository.save(order);
 
 
@@ -65,12 +65,12 @@ public class OrderService {
 
 
         // Call Payment Service to process payment
-        PaymentResponse paymentResponse = paymentClient.processPayment(paymentRequest.getData());
+        ApiResponse<PaymentResponse> paymentResponse = paymentClient.processPayment(paymentRequest);
         System.out.println("Payment Response: " + paymentResponse.getStatus());
 
-        savedOrder.setTransactionId(paymentResponse.getId());
-        System.out.println("Transaction ID set in order: " + paymentResponse.getId());
-        savedOrder.setStatus("COMPLETED");
+        savedOrder.setTransactionId(paymentResponse.getData().getId());
+        System.out.println("Transaction ID set in order: " + paymentResponse.getData().getId());
+        savedOrder.setStatus(paymentResponse.getData().getStatus().equals("SUCCESS") ? "ORDER PLACED" : "PAYMENT FAILED");
         Order updatedOrder = orderRepository.save(savedOrder);
 
         return convertEntityToDto(updatedOrder);
