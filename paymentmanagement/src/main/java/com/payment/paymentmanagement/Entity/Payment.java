@@ -1,11 +1,11 @@
 package com.payment.paymentmanagement.Entity;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 
 @Entity
 @Table(name = "payments")
-
 public class Payment {
 
     @Id
@@ -21,6 +21,9 @@ public class Payment {
         this.orderId = orderId;
         this.paymentMode = paymentMode;
         this.status = status;
+    }
+
+    public Payment() {
     }
 
     public Long getId() {
