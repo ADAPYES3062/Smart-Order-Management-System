@@ -23,6 +23,9 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private DiscountService discountService;
+
     public OrderDto.Response createOrder(OrderDto.Request orderRequest) {
         double totalAmount = 0.0;
 
@@ -46,7 +49,7 @@ public class OrderService {
         Order order = new Order();
         order.setProducts(orderRequest.getProducts());
         order.setPaymentMode(orderRequest.getPaymentMode());
-        order.setTotalAmount(totalAmount);
+        order.setTotalAmount(discountService.applyOrderDiscount(totalAmount));
         order.setStatus("PAYMENT_PENDING");
 
         Order savedOrder = orderRepository.save(order);
