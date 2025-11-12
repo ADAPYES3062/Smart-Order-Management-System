@@ -6,6 +6,7 @@ import com.order.ordermanagement.entity.Order;
 import com.order.ordermanagement.model.*;
 import com.order.ordermanagement.repository.OrderRepository;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class OrderService {
     @Autowired
     private DiscountService discountService;
 
+    @CircuitBreaker(name = "orderServiceCB", fallbackMethod = "orderFallback")
     public OrderDto.Response createOrder(OrderDto.Request orderRequest) {
         double totalAmount = 0.0;
 
@@ -92,6 +94,17 @@ public class OrderService {
                 order.getPaymentMode(),
                 order.getTotalAmount(),
                 order.getTransactionId()
+        );
+    }
+
+    public OrderDto.Response orderFallback(OrderDto.Request orderRequest, Throwable t) {
+        log.error("Product Service/ Payment Service is down. Falling back to OrderFallback method. Reason: {}", t.getMessage());
+        return new OrderDto.Response(
+                -1L,
+                orderRequest.getProducts(),
+                orderRequest.getPaymentMode(),
+                0.0,
+                -1L
         );
     }
 }
