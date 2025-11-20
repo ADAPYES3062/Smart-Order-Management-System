@@ -1,5 +1,7 @@
 package com.order.ordermanagement.controller;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.order.ordermanagement.model.OrderDto;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -28,6 +31,11 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<OrderDto.Response> getMethodName(@PathVariable Long id ) {
         return new ResponseEntity<>(orderService.getOrderDetails(id),HttpStatus.OK);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<OrderDto.Response>> getMethodAll() {
+        return new ResponseEntity<>(orderService.getOrderAllDetails(),HttpStatus.OK);
     }
 
     @PostMapping(consumes="application/json",produces="application/json")

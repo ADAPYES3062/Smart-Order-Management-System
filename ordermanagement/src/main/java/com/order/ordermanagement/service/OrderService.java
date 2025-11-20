@@ -1,5 +1,7 @@
 package com.order.ordermanagement.service;
 
+import java.util.List;
+
 import com.order.ordermanagement.client.PaymentClient;
 import com.order.ordermanagement.client.ProductClient;
 import com.order.ordermanagement.entity.Order;
@@ -8,6 +10,9 @@ import com.order.ordermanagement.repository.OrderRepository;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -106,5 +111,23 @@ public class OrderService {
                 0.0,
                 -1L
         );
+    }
+
+    public List<OrderDto.Response> getOrderAllDetails() {
+    return orderRepository.findAll()
+            .stream()
+            .map(this::convertEntityToDto)
+            .collect(Collectors.toList());
+}
+
+    public OrderDto.Response convertEntityToDto(Order order){
+        OrderDto.Response orderDto = new OrderDto.Response();
+        orderDto.setProducts(order.getProducts());
+        orderDto.setId(order.getId());
+        orderDto.setPaymentMode(order.getPaymentMode());
+        orderDto.setTransactionId(order.getTransactionId());
+        orderDto.setTotalAmount(order.getTotalAmount());
+        return orderDto;
+
     }
 }

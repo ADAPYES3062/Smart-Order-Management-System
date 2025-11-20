@@ -47,14 +47,16 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- WebFlux (required for the gateway) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId> <!-- required for gateway -->
+            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
+        <!-- NEW gateway starter (replaces spring-cloud-starter-gateway) -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
         </dependency>
     </dependencies>
     <dependencyManagement>
